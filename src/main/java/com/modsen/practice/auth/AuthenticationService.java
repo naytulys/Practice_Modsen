@@ -2,6 +2,7 @@ package com.modsen.practice.auth;
 
 import com.modsen.practice.auth.jwt.JwtService;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.modsen.practice.dto.UserResponse;
 import com.modsen.practice.entity.User;
 import com.modsen.practice.enumeration.Gender;
 import com.modsen.practice.enumeration.UserRole;
@@ -43,10 +44,11 @@ public class AuthenticationService {
                 .passwordHash(passwordEncoder.encode(request.getPasswordHash()))
                 .role(UserRole.CUSTOMER)
                 .build();
-        userService.save(user);
+        UserResponse userResponse = userService.save(user);
         var accessToken = jwtService.generateToken(new UserVODetails(user));
         var refreshToken = jwtService.generateRefreshToken(new UserVODetails(user));
         return AuthenticationResponse.builder()
+                .userId(userResponse.getId())
                 .accessToken(accessToken)
                 .refreshToken(refreshToken)
                 .role(UserRole.CUSTOMER.toString())
@@ -59,14 +61,15 @@ public class AuthenticationService {
                         request.getPassword()
                 )
         );
-        var user = userVODetailsService.loadUserByUsername(request.getUserData());
-        var accessToken = jwtService.generateToken(user);
-        var refreshToken = jwtService.generateRefreshToken(user);
+        var userVODetails = userVODetailsService.loadUserByUsername(request.getUserData());
+        var accessToken = jwtService.generateToken(userVODetails);
+        var refreshToken = jwtService.generateRefreshToken(userVODetails);
         return AuthenticationResponse.builder()
+                .userId(userVODetails.getUser().getId())
                 .accessToken(accessToken)
                 .refreshToken(refreshToken)
-                .role(user.getAuthorities().toString())
-                .userData(user.getUsername()).build();
+                .role(userVODetails.getAuthorities().toString())
+                .userData(userVODetails.getUsername()).build();
     }
     @SneakyThrows
     public void refreshToken(HttpServletRequest request,
@@ -80,12 +83,13 @@ public class AuthenticationService {
         refreshToken = authHeader.substring(7);
         username = jwtService.extractUsername(refreshToken);
         if (username != null) {
-            var user =  userVODetailsService.loadUserByUsername(username);
-            if (jwtService.isTokenValid(refreshToken, user)) {
-                var accessToken = jwtService.generateToken(user);
+            var userVODetails =  userVODetailsService.loadUserByUsername(username);
+            if (jwtService.isTokenValid(refreshToken, userVODetails)) {
+                var accessToken = jwtService.generateToken(userVODetails);
                 var authResponse = AuthenticationResponse.builder()
+                        .userId(userVODetails.getUser().getId())
                         .userData(username)
-                        .role(user.getAuthorities().toString())
+                        .role(userVODetails.getAuthorities().toString())
                         .accessToken(accessToken)
                         .refreshToken(refreshToken)
                         .build();

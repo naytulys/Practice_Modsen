@@ -31,6 +31,7 @@ public class Order {
     private BigDecimal price;
 
     @Column(name = "status")
+    @Enumerated(EnumType.STRING)
     private OrderStatus status;
 
     @Column(name = "city")

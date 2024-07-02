@@ -11,6 +11,8 @@ public interface OrderService {
 
     OrderResponse getById(Long id);
 
+    OrderResponse update(OrderRequest request);
+
     List<OrderResponse> getAll(Integer pageNumber, Integer pageSize, String sortBy, String sortOrder);
 
     List<OrderResponse> getAllByUserId(Long userId,Integer pageNumber, Integer pageSize, String sortBy, String sortOrder);

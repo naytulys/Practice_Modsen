@@ -9,6 +9,7 @@ import com.modsen.practice.service.OrderService;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Min;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -56,7 +57,16 @@ public class OrderController {
         return new ResponseEntity<>(orderResponse, HttpStatusCode.valueOf(201));
     }
 
-    @PreAuthorize("hasAuthority('CUSTOMER')")
+    @PreAuthorize("hasAnyAuthority('CUSTOMER','ADMIN')")
+    @PutMapping
+    @Validated(Marker.OnUpdate.class)
+    public ResponseEntity<OrderResponse> update(@RequestBody @Valid OrderRequest request) {
+        OrderResponse response = orderService.update(request);
+        return new ResponseEntity<>(response, HttpStatus.OK);
+    }
+
+
+    @PreAuthorize("hasAnyAuthority('CUSTOMER','ADMIN')")
     @DeleteMapping("/{id}")
     public ResponseEntity<String> delete(@PathVariable @Min(1) Long id) {
         orderService.delete(id);

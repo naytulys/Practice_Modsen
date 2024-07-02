@@ -8,6 +8,7 @@ import com.modsen.practice.dto.OrderResponse;
 import com.modsen.practice.entity.Order;
 import com.modsen.practice.entity.OrderItem;
 import com.modsen.practice.entity.User;
+import com.modsen.practice.enumeration.OrderStatus;
 import com.modsen.practice.exception.OrderNotExistException;
 import com.modsen.practice.repository.OrderRepository;
 import com.modsen.practice.repository.UserRepository;
@@ -26,6 +27,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.HashSet;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 
 @Service
@@ -55,12 +57,27 @@ public class OrderServiceImpl implements OrderService {
                 .toList();
     }
 
+    @Transactional
     @Override
     public List<OrderResponse> getAllByUserId(Long userId, Integer pageNumber, Integer pageSize, String sortBy, String sortOrder) {
         return orderRepository.findByUser_id(userId, PageRequest.of(pageNumber, pageSize, Sort.by(sortBy)))
                 .stream()
                 .map(order -> conversionService.convert(order, OrderResponse.class))
                 .toList();
+    }
+
+    @Transactional
+    @Override
+    public OrderResponse update(OrderRequest request) {
+        Optional<Order> orderNullable = orderRepository.findById(request.getId());
+        if (orderNullable.isPresent()) {
+            Order order = orderNullable.get();
+
+            order.setStatus(OrderStatus.valueOf(request.getStatus()));
+
+            return conversionService.convert(orderRepository.save(order), OrderResponse.class);
+        }
+        else throw new OrderNotExistException("Order with this id is not exists");
     }
 
     @Transactional

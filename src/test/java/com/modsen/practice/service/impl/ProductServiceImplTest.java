@@ -9,9 +9,11 @@ import com.modsen.practice.exception.product.ProductIsNotExistsException;
 import com.modsen.practice.repository.ProductRepository;
 import com.modsen.practice.service.CategoryService;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.modelmapper.ModelMapper;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.core.convert.ConversionService;
@@ -26,7 +28,7 @@ import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-@SpringBootTest
+@ExtendWith(MockitoExtension.class)
 class ProductServiceImplTest {
     @InjectMocks
     private ProductServiceImpl productServiceImpl;
@@ -247,7 +249,7 @@ class ProductServiceImplTest {
         Mockito.verify(productRepository, Mockito.times(1)).deleteById(1L);
     }
 
-    @Test()
+    @Test
     void delete_whenNotExists() {
         Mockito.when(productRepository.existsOrderItemById(1L)).thenReturn(false);
 

@@ -13,10 +13,6 @@ import java.util.Set;
 @Entity
 @Table(name = "categories")
 @Builder
-<<<<<<< HEAD
-@EqualsAndHashCode
-=======
->>>>>>> dece4ab01480537a5bddce8c9ace31e617fe5ea6
 public class Category {
 
     @Id
@@ -29,5 +25,4 @@ public class Category {
 
     @OneToMany(mappedBy = "category")
     private Set<Product> categoryProducts;
-
 }

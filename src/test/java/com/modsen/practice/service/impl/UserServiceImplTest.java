@@ -7,9 +7,11 @@ import com.modsen.practice.enumeration.UserRole;
 import com.modsen.practice.exception.UserIsNotExistsException;
 import com.modsen.practice.repository.UserRepository;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.core.convert.ConversionService;
 import org.springframework.data.domain.PageImpl;
@@ -23,7 +25,7 @@ import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-@SpringBootTest
+@ExtendWith(MockitoExtension.class)
 class UserServiceImplTest {
 
     @InjectMocks
@@ -95,7 +97,6 @@ class UserServiceImplTest {
                 .passwordHash("passwordhash")
                 .role(UserRole.ADMIN)
                 .phoneNumber("+375333333333")
-                .birthDate(Date.valueOf("01.01.2001"))
                 .email("test@email.com")
                 .build();
 
@@ -109,7 +110,6 @@ class UserServiceImplTest {
                 .passwordHash(user.getPasswordHash())
                 .role(user.getRole())
                 .phoneNumber(user.getPhoneNumber())
-                .birthDate(user.getBirthDate())
                 .email(user.getEmail())
                 .build();
 
@@ -122,10 +122,10 @@ class UserServiceImplTest {
                 .login(user.getLogin())
                 .role(String.valueOf(user.getRole()))
                 .phoneNumber(user.getPhoneNumber())
-                .birthDate(user.getBirthDate())
                 .email(user.getEmail())
                 .build();
-
+        Mockito.when(userRepository.existsUserByLogin(user.getLogin())).thenReturn(false);
+        Mockito.when(userRepository.existsUserByEmail(user.getEmail())).thenReturn(false);
         Mockito.when(userRepository.save(user)).thenReturn(savedUser);
         Mockito.when(conversionService.convert(savedUser, UserResponse.class)).thenReturn(expected);
 
@@ -136,16 +136,16 @@ class UserServiceImplTest {
 
     @Test
     void delete_whenExists() {
-        Mockito.when(userRepository.existsById(1L)).thenReturn(true);
+        Mockito.when(userRepository.findById(1L)).thenReturn(Optional.of(new User()));
 
         userServiceImpl.delete(1L);
 
         Mockito.verify(userRepository, Mockito.times(1)).deleteById(1L);
     }
 
-    @Test()
+    @Test
     void delete_whenNotExists() {
-        Mockito.when(userRepository.existsById(1L)).thenReturn(false);
+        Mockito.when(userRepository.findById(1L)).thenReturn(Optional.empty());
 
         assertThrows(UserIsNotExistsException.class, () -> userServiceImpl.delete(1L));
 

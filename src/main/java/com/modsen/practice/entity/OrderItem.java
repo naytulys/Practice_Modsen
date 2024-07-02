@@ -11,7 +11,6 @@ import lombok.*;
 @Entity
 @Table(name = "order_items")
 @Builder
-@EqualsAndHashCode
 public class OrderItem {
 
     @Id

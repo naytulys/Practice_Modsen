@@ -10,9 +10,11 @@ import com.modsen.practice.exception.orderItem.OrderItemIsNotExistsException;
 import com.modsen.practice.repository.OrderItemRepository;
 import com.modsen.practice.service.ProductService;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.modelmapper.ModelMapper;
 import org.springframework.boot.ApplicationRunner;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -27,8 +29,9 @@ import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.any;
 
-@SpringBootTest
+@ExtendWith(MockitoExtension.class)
 class OrderItemServiceImplTest {
 
     @InjectMocks
@@ -135,7 +138,7 @@ class OrderItemServiceImplTest {
 
         Mockito.when(productServiceImpl.getById(request.getProductId())).thenReturn(productResponse);
         Mockito.when(modelMapper.map(productResponse, Product.class)).thenReturn(product);
-        Mockito.when(orderItemRepository.save(orderItem)).thenReturn(savedOrderItem);
+        Mockito.when(orderItemRepository.save(any())).thenReturn(savedOrderItem);
         Mockito.when(modelMapper.map(savedOrderItem, OrderItemResponse.class)).thenReturn(expected);
 
         OrderItemResponse actual = orderItemServiceImpl.save(request, order);
@@ -152,7 +155,7 @@ class OrderItemServiceImplTest {
         Mockito.verify(orderItemRepository, Mockito.times(1)).deleteById(1L);
     }
 
-    @Test()
+    @Test
     void delete_whenNotExists() {
         Mockito.when(orderItemRepository.existsOrderItemById(1L)).thenReturn(false);
 

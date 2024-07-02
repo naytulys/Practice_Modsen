@@ -19,6 +19,7 @@
         <testcontainers-postgresql.version>1.19.8</testcontainers-postgresql.version>
         <io.jsonwebtoken.version>0.11.5</io.jsonwebtoken.version>
         <com.fasterxml.jackson.core.version>2.15.2</com.fasterxml.jackson.core.version>
+        <modelmapper.version>3.2.0</modelmapper.version>
     </properties>
     <dependencies>
         <dependency>
@@ -108,9 +109,10 @@
         <dependency>
             <groupId>org.modelmapper</groupId>
             <artifactId>modelmapper</artifactId>
-            <version>3.2.0</version>
+            <version>${modelmapper.version}</version>
         </dependency>
     </dependencies>
+
 
     <build>
         <plugins>
@@ -120,7 +122,7 @@
                 <configuration>
                     <excludes>
                         <exclude>
-                            <groupId>org.projectlombok</groupId>
+                            <groupId>org.project.lombok</groupId>
                             <artifactId>lombok</artifactId>
                         </exclude>
                     </excludes>

@@ -1,10 +1,7 @@
 package com.modsen.practice.entity;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import java.util.Set;
 
@@ -15,6 +12,7 @@ import java.util.Set;
 
 @Entity
 @Table(name = "categories")
+@Builder
 public class Category {
 
     @Id

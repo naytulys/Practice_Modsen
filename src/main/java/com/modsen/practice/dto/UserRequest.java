@@ -13,6 +13,7 @@ import java.time.LocalDate;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
+@Builder
 public class UserRequest {
     @Null(groups = Marker.OnCreate.class)
     private Long id;
